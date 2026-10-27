@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Shower - Jasper Zahir</title>
+    <style>
+        /* Estilos CSS para el diseño tierno y responsivo */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f9f9;
+            color: #555;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 40px 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #eef5f5;
+        }
+
+        .emoji-header {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #2b5876;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ffd166;
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            background-color: #f7fafc;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.3s;
+        }
+
+        .radio-label:hover {
+            background-color: #edf2f7;
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #ffd166;
+        }
+
+        /* Cambiar estilo si el radio está seleccionado vía JS */
+        .radio-label.selected {
+            border-color: #ffd166;
+            background-color: #fffdf5;
+        }
+
+        button {
+            background-color: #ffd166;
+            color: #4a5568;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(255, 209, 102, 0.2);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #ffca47;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #mensajeResultado {
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="emoji-header">🧸</div>
+        <h1>¡Te invitamos al Baby Shower de nuestro amado Jasper Zahir!</h1>
+        <p class="subtitle">Un pedacito de cielo está por llegar...</p>
+
+        <form id="formAsistencia">
+            <div class="form-group">
+                <label for="nombre">¿Cuál es tu nombre y apellido?</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre aquí" required>
+            </div>
+
+            <div class="form-group">
+                <label>¿Confirmas tu asistencia?</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="asistencia" value="¡Sí, allí estaré! 💛" required>
+                        ¡Sí, allí estaré! 💛
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="asistencia" value="Lo siento, no podré asistir" required>
+                        Lo siento, no podré asistir
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="btnEnviar">Enviar confirmación</button>
+        </form>
+
+        <div id="mensajeResultado"></div>
+    </div>
+
+    <script>
+        // Manejo visual de selección de opciones
+        const radioLabels = document.querySelectorAll('.radio-label');
+        radioLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                radioLabels.forEach(l => l.classList.remove('selected'));
+                label.classList.add('selected');
+            });
+        });
+
+        // Envío de datos por JavaScript de manera asíncrona (Fetch API)
+        const formulario = document.getElementById('formAsistencia');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const mensajeResultado = document.getElementById('mensajeResultado');
+
+        // REEMPLAZA ESTO con tu URL real generada en Google Apps Script
+        const URL_SCRIPT = 'TU_URL_DE_APPS_SCRIPT_AQUÍ';
+
+        formulario.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            btnEnviar.disabled = true;
+            btnEnviar.innerText = 'Enviando...';
+
+            const nombreVal = document.getElementById('nombre').value;
+            const asistenciaVal = document.querySelector('input[name="asistencia"]:checked').value;
+
+            const datos = {
+                nombre: nombreVal,
+                asistencia: asistenciaVal
+            };
+
+            // Petición POST enviando los datos como texto plano estructurado en JSON
+            fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors', // Evita problemas de CORS comunes en Apps Script
+                headers: {
+                    'Content-Type': 'application/plain'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(() => {
+                // Al usar 'no-cors' no podemos leer la respuesta exacta, pero si llega aquí se procesó
+                mensajeResultado.style.color = '#2f855a';
+                mensajeResultado.innerText = '¡Muchas gracias! Tu respuesta ha sido guardada. ✨';
+                mensajeResultado.style.display = 'block';
+                formulario.reset();
+                radioLabels.forEach(l => l.classList.remove('selected'));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mensajeResultado.style.color = '#c53030';
+                mensajeResultado.innerText = 'Hubo un problema al enviar. Por favor, intenta de nuevo.';
+                mensajeResultado.style.display = 'block';
+            })
+            .finally(() => {
+                btnEnviar.disabled = false;
+                btnEnviar.innerText = 'Enviar confirmación';
+            });
+        });
+    </script>
+</body>
+</html>
